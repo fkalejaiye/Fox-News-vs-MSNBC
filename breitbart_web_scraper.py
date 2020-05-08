@@ -54,7 +54,9 @@ def get_articles(urls_of_articles):
                     t = j.get_text()
                     content.append(t)
             content = " ".join(content)
-            articles.insert_one({'title':title, 'author':author, 'date': date, 'content': content})
+            key = {"title":title}
+            value = {'title':title, 'author':author, 'date': date, 'content': content}
+            articles.update(key,value,upsert=True)
             count+=1
             print(f'Scraped {count} articles. ({title})')
             time.sleep(2)
@@ -62,6 +64,6 @@ def get_articles(urls_of_articles):
             print('Failed to get page!')
             continue
 
-websites = [urls.find()[i]['link'] for i in range(5001)]
+websites = [urls.find()[i]['link'] for i in range(4000,5001)]
 get_articles(websites)
 print('Finished Scraping!')
