@@ -57,6 +57,6 @@ def get_articles(urls_of_articles):
         else:
             continue
 
-websites = [urls.find()[i]['link'] for i in range(5001)]
+websites = [urls.find()[i]['link'] for i in range(5001,6000)]
 get_articles(websites)
 print('Finished Scraping!')
