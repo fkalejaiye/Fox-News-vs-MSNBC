@@ -51,8 +51,9 @@ def get_articles(urls_of_articles):
             content=[]
             for i in data:
                 for j in i.find_all('p'):
-                    t = j.get_text()
-                    content.append(t)
+                    if str(j).startswith("<p><em>")==False:
+                        t = j.get_text()
+                        content.append(t)
             content = " ".join(content)
             key = {"title":title}
             value = {'title':title, 'author':author, 'date': date, 'content': content}
@@ -64,6 +65,6 @@ def get_articles(urls_of_articles):
             print('Failed to get page!')
             continue
 
-websites = [urls.find()[i]['link'] for i in range(5000,7500)]
+websites = [urls.find()[i]['link'] for i in range(3600,6000)]
 get_articles(websites)
 print('Finished Scraping!')
