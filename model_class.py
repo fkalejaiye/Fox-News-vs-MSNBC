@@ -18,14 +18,14 @@ class ModelBuilder():
         self.articles = data['content']
         
         
-    def vectorize(self,num_max_features):
+    def vectorize(self,num_max_features,ngrams):
         stopwords = nltk.corpus.stopwords.words('english')
         stopwords.append('breitbart')
         stopwords.append('follow')
         stopwords.append('facebook')
         stopwords.append('twitter')
         stopwords.append('email')
-        self.vectorizer = TfidfVectorizer(max_df=0.95, min_df=2,stop_words=stopwords,max_features=num_max_features)
+        self.vectorizer = TfidfVectorizer(max_df=0.95, min_df=2,stop_words=stopwords,ngram_range=ngrams,max_features=num_max_features)
         tfidf = self.vectorizer.fit_transform(self.articles)
         self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(tfidf, self.articles_info['source'],test_size=0.2)
         

@@ -29,7 +29,7 @@ class DataPipeline():
         for art in df['content']:
             new_text = []
             for sentence in art.split("."):
-                if "Follow" not in sentence and "is a reporter" not in sentence and "Breitbart" not in sentence and "breitbart" not in sentence:
+                if "Follow" not in sentence and "is a reporter" not in sentence and "Breitbart" not in sentence and "breitbart" not in sentence and "reporting" not in sentence:
                     new_text.append(sentence)
             new_content2.append(".".join(new_text))
         df['content']= new_content2
