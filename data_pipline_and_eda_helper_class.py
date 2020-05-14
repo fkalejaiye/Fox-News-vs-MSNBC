@@ -25,16 +25,14 @@ class DataPipeline():
         df['source']=f'{news_source}'
         df.reset_index(inplace=True)
         df = df.iloc[:,1:]
-        new_content=[]
+        new_content2=[]
         for art in df['content']:
-            sentences = art.split(".")
-            if sentences[-1].startswith('com')==True:
-                sentences = sentences[:-2]
-                new_content.append(".".join(sentences))
-            else:
-                sentences = sentences[:-1]
-                new_content.append(".".join(sentences))
-        df['content']= new_content
+            new_text = []
+            for sentence in art.split("."):
+                if "Follow" not in sentence and "is a reporter" not in sentence and "Breitbart" not in sentence and "breitbart" not in sentence:
+                    new_text.append(sentence)
+            new_content2.append(".".join(new_text))
+        df['content']= new_content2
         return df
     
     def combine_news_sources(self,source1,source2):

@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 import nltk
+from sklearn.metrics import confusion_matrix
 
 class ModelBuilder():
     
@@ -26,7 +27,7 @@ class ModelBuilder():
         stopwords.append('email')
         self.vectorizer = TfidfVectorizer(max_df=0.95, min_df=2,stop_words=stopwords,max_features=num_max_features)
         tfidf = self.vectorizer.fit_transform(self.articles)
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(tfidf, self.articles_info['source'],test_size=0.2, random_state=0)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(tfidf, self.articles_info['source'],test_size=0.2)
         
     def fit_and_score(self,model_used):
         self.model = model_used
@@ -54,6 +55,11 @@ class ModelBuilder():
         for i in range(num_of_words):
             top_words.append(feature_names[indices[i]])
         return top_words
+    
+    def get_confusion_matrix(self):
+        y_pred = self.model.predict(self.X_test)
+        tn, fp, fn, tp = confusion_matrix(self.y_test, y_pred).ravel()
+        return f'True Negatives: {tn}, True Positives {tp}, False Negatives {fn}, False Positives {fp}.'
         
         
         
