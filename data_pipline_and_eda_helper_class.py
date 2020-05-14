@@ -40,6 +40,7 @@ class DataPipeline():
     def combine_news_sources(self,source1,source2):
         self.articles_info = pd.concat([self.pipeline(source1),self.pipeline(source2)])
         self.articles = self.articles_info['content']
+        self.articles_info = self.articles_info.reset_index().iloc[:,1:]
 
 
     def get_word_count(self,article):
