@@ -29,7 +29,7 @@ class DataPipeline():
         for art in df['content']:
             new_text = []
             for sentence in art.split("."):
-                if "Follow" not in sentence and "is a reporter" not in sentence and "Breitbart" not in sentence and "breitbart" not in sentence and "reporting" not in sentence:
+                if "Follow" not in sentence and "is a reporter" not in sentence and "Breitbart" not in sentence and "breitbart" not in sentence and "reporting" not in sentence and "comment section" not in sentence and "what YOU have to say" not in sentence:
                     new_text.append(sentence)
             new_content2.append(".".join(new_text))
         df['content']= new_content2
@@ -73,9 +73,9 @@ class DataPipeline():
         plt.tight_layout();
 
 
-    def plot_article_dates(self):
+    def plot_article_dates(self,website):
         self.articles_info['date'] = pd.to_datetime(self.articles_info['date'])
-        date_counts = self.articles_info.sort_values('date').groupby('date').count()
+        date_counts = self.articles_info[self.articles_info['source']==website].sort_values('date').groupby('date').count()
         fig,ax =plt.subplots(figsize=(16,8))
         plt.hist(date_counts.index,bins=20)
         plt.xlabel("Year")
