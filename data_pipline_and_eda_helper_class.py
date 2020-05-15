@@ -73,11 +73,11 @@ class DataPipeline():
         plt.tight_layout();
 
 
-    def plot_article_dates(self,website):
+    def plot_article_dates(self):
         self.articles_info['date'] = pd.to_datetime(self.articles_info['date'])
-        date_counts = self.articles_info[self.articles_info['source']==website].sort_values('date').groupby('date').count()
+        date_counts = self.articles_info.sort_values('date').groupby('date').count()
         fig,ax =plt.subplots(figsize=(16,8))
-        plt.hist(date_counts.index,bins=10)
+        plt.hist(date_counts.index,bins=10,color='c')
         plt.xlabel("Year")
         plt.ylabel("Frequency")
         plt.title("Article Date Frequency");
