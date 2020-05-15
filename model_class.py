@@ -12,6 +12,9 @@ from sklearn.metrics import confusion_matrix
 import string
 import seaborn as sns
 import matplotlib.pyplot as plt
+from nltk.tokenize import RegexpTokenizer
+from nltk.stem.porter import PorterStemmer
+from sklearn.decomposition import NMF
 
 class ModelBuilder():
     
@@ -27,32 +30,69 @@ class ModelBuilder():
         words = [self.porter_stemmer.stem(word) for word in words]
         return words
     
-    
-    def vectorize(self,num_max_features,ngrams):
-        porter_stemmer = PorterStemmer()
-        stopwords = nltk.corpus.stopwords.words('english')
-        date_corrections = ['breitbart','follow','facebook','twitter','email','coronavirus','tuesday','biden', 'positive','pandemic', '2020','covid','outbreak','health','virus']
+    def tokenize(self,text):
+        tokenizer = RegexpTokenizer(r"[\w']+")
+        stem = PorterStemmer().stem 
+        stop_set = set(stopwords.words('english'))
+        date_corrections = ['breitbart','follow','facebook','twitter','email','coronavirus','tuesday','biden', 'positive','pandemic', '2020','covid','outbreak','health','virus','joe']
         for word in date_corrections:
-            stopwords.append(word)
-                       
-        self.vectorizer = TfidfVectorizer(max_df=0.95, min_df=2,stop_words=stopwords,ngram_range=ngrams, max_features=num_max_features)
-        tfidf = self.vectorizer.fit_transform(self.articles)
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(tfidf, self.articles_info['source'],test_size=0.2)
+            stop_set.add(word)
+        tokens = tokenizer.tokenize(text)
+        stems = [stem(token) for token in tokens if token.lower() not in stop_set]
+        return stems
+    
+    def vectorize(self,nummax_features=None,ngrams=None):
         
+        self.vectorizer = TfidfVectorizer(tokenizer=self.tokenize, ngram_range = ngrams,max_features=nummax_features)
+        self.tfidf = self.vectorizer.fit_transform(self.articles)
+        self.tfidf_breitbart = self.vectorizer.fit_transform(self.articles_info['content'][self.articles_info['source']=='breitbart'])
+        self.tfidf_occupy_democrats = self.vectorizer.fit_transform(self.articles_info['content'][self.articles_info['source']=='occupy_democrats'])
+        self.vocab = np.array(self.vectorizer.get_feature_names())
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.tfidf, self.articles_info['source'],test_size=0.2)
+        
+    
+    def fit_nmf_and_return_topics(self,website,num_topics=50,handlabel=False):
+        nmf=NMF(n_components=50)
+        if website=='breitbart':
+            nmf.fit(self.tfidf_breitbart)
+            W = nmf.transform(self.tfidf_breitbart)
+            H = nmf.components_
+            if handlabel==True:
+                return hand_label_topics(H,self.vocab,num_topics)
+            elif handlabel==False:
+                return self.get_topics(H,self.vocab,num_topics)
+        elif website=='occupy_democrats':
+            nmf.fit(self.tfidf_occupy_democrats)
+            W = nmf.transform(self.tfidf_occupy_democrats)
+            H = nmf.components_
+            if handlabel==True:
+                return hand_label_topics(H,self.vocab,num_topics)
+            elif handlabel==False:
+                return self.get_topics(H,self.vocab,num_topics)
+            
+        
+        
+    def get_topics(self, H, vocabulary,num_of_topics):
+        count=0
+        l = []
+        for i, row in enumerate(H):
+            if count < num_of_topics:
+                top_ten = np.argsort(row)[::-1][:10]
+                print(f'Topic {i+1}:')
+                print('------->', ' '.join(vocabulary[top_ten]))
+                label = f'Topic {i+1}'
+                l.append(label)
+
+                count+=1
+
+        return l
+    
+    
     def fit_and_score(self,model_used):
         self.model = model_used
         self.model.fit(self.X_train,self.y_train)
         return self.model.score(self.X_test,self.y_test)
     
-    def test_bias(self,text):
-        X = self.vectorizer.transform(text)
-        yhat = self.model.predict(X)
-        count=0
-        for pred in yhat:
-            if pred=='breitbart':
-                count+=1
-        breit_freq = (count/len(yhat))*100
-        return f'Predicted as Breitbart {round(breit_freq,2)}% of the time.'
     
     def get_most_important_words(self,num_of_words):
         importances = self.model.feature_importances_

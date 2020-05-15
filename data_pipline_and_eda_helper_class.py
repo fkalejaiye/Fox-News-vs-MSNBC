@@ -53,7 +53,7 @@ class DataPipeline():
             else:
                 word_count_breit.append(self.get_word_count(article))
 
-        fig,ax = plt.subplots(1,2,figsize=(16,8),sharey=True)
+        fig,ax = plt.subplots(1,2,figsize=(16,8),sharey=True,sharex=True)
         ax[0].hist(word_count_oc,color="b",label="Occupy Democrats")
         ax[1].hist(word_count_breit,label="Breitbart")
         ax[0].set_xlabel("Word Count")
@@ -77,7 +77,7 @@ class DataPipeline():
         self.articles_info['date'] = pd.to_datetime(self.articles_info['date'])
         date_counts = self.articles_info[self.articles_info['source']==website].sort_values('date').groupby('date').count()
         fig,ax =plt.subplots(figsize=(16,8))
-        plt.hist(date_counts.index,bins=20)
+        plt.hist(date_counts.index,bins=10)
         plt.xlabel("Year")
         plt.ylabel("Frequency")
         plt.title("Article Date Frequency");
