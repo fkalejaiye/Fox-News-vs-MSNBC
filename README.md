@@ -3,7 +3,7 @@
 
 ## Background
 
-In American society today, trust in the media is at an all time low. Terms like fake news and media bias have beomce commonplace in our national discourse. There are entire news sources that seem more dedicated to disseminating their own opinions rather than unbiasedly and factually reporting the news. Two such websites are Occupy Democrats, and Breitbart. Breitbart is an online news outlet with a strong conservative bias. Occupy Democrats is very similar, but it has a very strong liberal bias. Both websites often contain propaganda and report misleading info. These two websites are prefect candidates to use to understand media bias.
+In American society today, trust in the media is at an all time low. Terms like fake news and media bias have become commonplace in our national discourse. There are entire news sources that seem more dedicated to disseminating their own opinions rather than unbiasedly and factually reporting the news. Two such websites are Occupy Democrats, and Breitbart. Breitbart is an online news outlet with a strong conservative bias. Occupy Democrats is very similar, but it has a very strong liberal bias. Both websites often contain propaganda and report misleading info. These two websites are prefect candidates to use to understand media bias.
 
 ![](images/Media-Bias-Chart-2018.jpg)
 
